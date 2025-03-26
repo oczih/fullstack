@@ -1,0 +1,3 @@
+[submodule "osa3"]
+	path = osa3
+	url = https://github.com/oczih/puhelinluettelo-backend.git
