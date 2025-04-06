@@ -19,21 +19,21 @@ beforeEach(async () => {
         {
             username: "jaakkojuhana",
             name: "Jaakko Roikka",
-            passwordHash: passW1,  // ✅ Use "passwordHash"
+            passwordHash: passW1,
         },
         {
             username: "jaakkokaks",
             name: "Jaakko Kaks",
-            passwordHash: passW2,  // ✅ Use "passwordHash"
+            passwordHash: passW2,
         }
     ];
 
-    await User.insertMany(existingUsers); // ✅ Inserts all users at once
+    await User.insertMany(existingUsers);
 });
 
 test('Mongo users[] length equals existingUsers[] length', async () => {
     const usersFromMongo = await User.find({});
-    assert.strictEqual(usersFromMongo.length, 2)  // ✅ Use explicit number
+    assert.strictEqual(usersFromMongo.length, 2)
 });
 test('Too short username', async () => {
     const usersBefore = await User.find({});
