@@ -24,6 +24,7 @@ blogsRouter.post('/', tokenExtractor, userExtractor, async (request, response) =
     if(!user){
       return response.status(401).json({error: "token missing or invalid"})
     }
+    
     const blog = new Blog({
       title: body.title,
       author: body.author,
@@ -31,22 +32,32 @@ blogsRouter.post('/', tokenExtractor, userExtractor, async (request, response) =
       likes: body.likes ? body.likes : 0,
       user: user.id
     })
-
+    if (!body.title || !body.url) {
+      return response.status(400).json({ error: 'title and url are required' })
+    }
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog.id)
     await user.save()
     response.status(201).json(savedBlog)
   })
 
-blogsRouter.delete('/:id', tokenExtractor, userExtractor, async (request, response) => {
+  blogsRouter.delete('/:id', tokenExtractor, userExtractor, async (request, response) => {
     const user = request.user
     const blog = await Blog.findById(request.params.id)
-    if(blog.user.toString() === request.user.id){
-      await Blog.findByIdAndDelete(request.params.id)
-        response.status(204).end()
-    }else{
+
+    if (!user) {
+      return response.status(401).json({ error: 'token missing or invalid' })
+    }
+    if (!blog) {
+      return response.status(404).json({ error: 'blog not found' })
+    }
+    if (blog.user.toString() !== user.id) {
       return response.status(401).json({ error: 'Unauthorized to delete the blog' })
     }
+    
+    
+    await Blog.findByIdAndDelete(request.params.id)
+    response.status(204).end()
 })
 
 blogsRouter.put('/:id', async (request, response) => {

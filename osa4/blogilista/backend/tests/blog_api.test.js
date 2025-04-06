@@ -98,7 +98,7 @@ describe('adding a blog', () => {
     })
     const token = login.body.token
       const newBlog = {
-        author: 'Roger Freedman'
+        author: 'asdajisdjaiosdjoi'
       }
     
       await api
@@ -134,7 +134,7 @@ describe('adding a blog', () => {
 })  
 
 
-describe('deletion of a note', () => {
+describe('deletion of a blog', () => {
   test('a specific blog can be deleted', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToDelete = blogsAtStart[0]
@@ -157,7 +157,7 @@ describe('deletion of a note', () => {
 
 describe('editing a blog', () => {
   test('a specific blog can be edited', async () => {
-    const user = await api.post('/api/login').send({
+    const login = await api.post('/api/login').send({
       username: 'arvom',
       password: '123456'
     })
@@ -172,9 +172,9 @@ describe('editing a blog', () => {
     const blogsInDb = await helper.blogsInDb()
     const matchingBlog = blogsInDb.find(r => r.title === newBlog.title)
     await api
-          .set('Authorization', `Bearer ${token}`)  
-          .send(newBlog)
           .put(`/api/blogs/${matchingBlog.id}`)
+          .send(newBlog)
+          .set('Authorization', `Bearer ${token}`)  
           .expect(200)
 
 

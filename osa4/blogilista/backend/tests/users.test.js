@@ -12,18 +12,18 @@ const saltRounds = 10;
 beforeEach(async () => {
     await User.deleteMany({});
 
-    const passW1 = await bcrypt.hash("naaais", saltRounds);
-    const passW2 = await bcrypt.hash("kiiisujapaljon", saltRounds);
+    const passW1 = await bcrypt.hash("passwordslol", saltRounds);
+    const passW2 = await bcrypt.hash("passwordslol2312", saltRounds);
 
     const existingUsers = [
         {
-            username: "jaakkojuhana",
-            name: "Jaakko Roikka",
+            username: "mrpassword",
+            name: "Mr Password",
             passwordHash: passW1,
         },
         {
-            username: "jaakkokaks",
-            name: "Jaakko Kaks",
+            username: "mrsalasana",
+            name: "Mr Salasana",
             passwordHash: passW2,
         }
     ];
