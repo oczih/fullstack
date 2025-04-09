@@ -9,26 +9,21 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const bcrypt = require('bcryptjs');
 
-beforeEach(async () => {  
-  await User.deleteMany({})
-
-  const passwordHash = await bcrypt.hash("123456", 10)
-    const user = new User({
-       username: "arvom",
-       name: "Arvo",
-       blogs: [],
-       passwordHash
-    })
-  
-    await user.save()
-}, 100000)
-
-
 beforeEach(async () => {
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash("123456", 10)
+
+  const user = new User({
+    username: "arvom",
+    name: "Arvo",
+    blogs: [],
+    passwordHash
+  })
+  await user.save()
+
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
 })
-
 
 describe('get tests', () => {
   test('there are three blogs', async () => {
@@ -132,26 +127,49 @@ describe('adding a blog', () => {
     assert.strictEqual(addedBlog.likes, 0)
   })
 })  
+test('blog cannot be added without a valid token', async () => {
+  const newBlog = {
+    title: 'React patterns',
+    author: 'Michael Chan',
+    url: 'https://reactpatterns.com/123',
+    likes: 9,
+  }
 
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401) 
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await api.get('/api/blogs')
+  assert.strictEqual(blogsAtEnd.body.length, helper.initialBlogs.length)
+})
 
 describe('deletion of a blog', () => {
   test('a specific blog can be deleted', async () => {
-    const blogsAtStart = await helper.blogsInDb()
-    const blogToDelete = blogsAtStart[0]
     const login = await api.post('/api/login').send({
       username: 'arvom',
       password: '123456'
     })
     const token = login.body.token
+    const newBlog = {
+      title: 'Blog to delete',
+      author: 'Someone',
+      url: 'http://example.com',
+      likes: 5
+    }
+    const createdBlog = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
+      .send(newBlog)
     await api
-        .delete(`/api/blogs/${blogToDelete.id}`)
+        .delete(`/api/blogs/${createdBlog.body.id}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
-    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length -1)
     const titles = blogsAtEnd.map(r => r.title)
-    assert(!titles.includes(blogToDelete.title))
+    assert(!titles.includes(newBlog.title))
   })
 })
 

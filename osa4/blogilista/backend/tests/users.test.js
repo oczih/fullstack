@@ -6,55 +6,53 @@ const User = require('../models/user');
 const app = require('../App');
 const api = supertest(app);
 const bcrypt = require('bcryptjs');
+const helper = require('./test_helper')
 
-const saltRounds = 10;
 
+const getInitialUsers = async () => {
+    return [
+      {
+        username: "mrpassword",
+        name: "Mr Password",
+        passwordHash: await bcrypt.hash("passwordslol", 10),
+      },
+      {
+        username: "mrsalasana",
+        name: "Mr Salasana",
+        passwordHash: await bcrypt.hash("passwordslol2312", 10),
+      },
+    ];
+  };
 beforeEach(async () => {
     await User.deleteMany({});
-
-    const passW1 = await bcrypt.hash("passwordslol", saltRounds);
-    const passW2 = await bcrypt.hash("passwordslol2312", saltRounds);
-
-    const existingUsers = [
-        {
-            username: "mrpassword",
-            name: "Mr Password",
-            passwordHash: passW1,
-        },
-        {
-            username: "mrsalasana",
-            name: "Mr Salasana",
-            passwordHash: passW2,
-        }
-    ];
-
+    const existingUsers = await getInitialUsers();
     await User.insertMany(existingUsers);
 });
 
-test('Mongo users[] length equals existingUsers[] length', async () => {
-    const usersFromMongo = await User.find({});
-    assert.strictEqual(usersFromMongo.length, 2)
-});
-test('Too short username', async () => {
-    const usersBefore = await User.find({});
-    const newUser = {
-        username: "ei",
-        name: "Eino",
-        password: "12345"
+test('username is less than 3 characters', async () => {
+    const usersAtStart = await helper.usersInDb();
 
+    const newUser = {
+        username: 'ro',
+        name: 'lolsda',
+        password: 'salainen',
     }
-    await api
+
+    await api 
         .post('/api/users')
         .send(newUser)
         .expect(400)
+        .expect('Content-Type', /application\/json/ )
 
-    const usersAfter = await User.find({});
-    assert.strictEqual(usersAfter.length, usersBefore.length)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.deepStrictEqual(usersAtEnd, usersAtStart)
 })
+
 
 test('Too short password', async () => {
     const tooShortPW = {
-        username: "arvom",
+        username: "arvzxc",
         name: "Arvo",
         password: "ok"
     }

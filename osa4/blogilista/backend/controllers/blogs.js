@@ -3,6 +3,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const { tokenExtractor, userExtractor } = require('../utils/middleware')
+const mongoose = require('mongoose');
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user')
@@ -51,7 +52,7 @@ blogsRouter.post('/', tokenExtractor, userExtractor, async (request, response) =
     if (!blog) {
       return response.status(404).json({ error: 'blog not found' })
     }
-    if (blog.user.toString() !== user.id) {
+    if (!blog.user || blog.user.toString() !== user.id) {
       return response.status(401).json({ error: 'Unauthorized to delete the blog' })
     }
     
