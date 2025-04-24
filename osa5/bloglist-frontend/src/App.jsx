@@ -6,8 +6,7 @@ import loginService from './services/login'
 import Footer from './components/Footer'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
-import BlogForm from './components/BlogFOrm'
-import { set } from 'mongoose'
+import BlogForm from './components/BlogForm'
 import PropTypes from 'prop-types'
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -112,7 +111,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        <h2>Log in to application</h2>
+        <h2>blogs</h2>
         <Notification message={errorMessage}/>
         <Togglable buttonLabel='show login'>
           <LoginForm
@@ -124,6 +123,7 @@ const App = () => {
             <button type="submit">login</button>
           </LoginForm>
         </Togglable>
+        <Footer />
       </div>
     )
   }

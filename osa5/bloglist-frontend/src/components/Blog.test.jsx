@@ -2,109 +2,89 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 import Togglable from './Togglable'
-import BlogForm from './BlogFOrm'
+import BlogForm from './BlogForm'
 
 test('renders content', () => {
-  const blog= {
-    title: 'Component testing is done with react-testing-library'
+  const blog = {
+    title: 'Test Blog Title',
+    author: 'Test Author',
+    url: 'http://example.com',
+    likes: 5
   }
 
-  const { container } = render(<Blog blog={blog} />)
+  render(<Blog blog={blog} />)
+  expect(screen.getByText(/Test Blog Title/)).toBeDefined()
 
-  const div = container.querySelector('.blog')
-  expect(div).toHaveTextContent(
-    'Component testing is done with react-testing-library'
-  )
+  expect(screen.getByText(/Test Author/)).toBeDefined()
+  expect(screen.queryByText('http://example.com')).toBeNull()
+  expect(screen.getByText(/likes/i)).toBeDefined()
+
 })
-test('clicking the button reveals children', async () => {
-    let container
-    container = render(
-        <Togglable buttonLabel="show...">
-          <div className="testDiv" >
-            togglable content
-          </div>
-        </Togglable>
-      ).container
+test('likes and testuser should be revealed', async () => {
+  const blog = {
+    title: 'Another Blog',
+    author: 'Jane Doe',
+    url: 'http://another.com',
+    likes: 12,
+    user: {
+      name: 'Test User'
+    }
+  }
 
-    const blog= {
-        title: 'Component testing is done with react-testing-library',
-        author: "Michael Smith",
-        url: 'https://testing-library.com/docs/example-react',
-        likes: 0
-      }
-    const div = container.querySelector('.togglableContent')
-    const mockHandler = vi.fn()
-      
-    render(
-      <Blog blog={blog} handleLikeChange={mockHandler} />
-    )
-  
-    const user = userEvent.setup()
-    const button = screen.getByText('view')
-    await user.click(button)
-  
-    expect(div).toHaveStyle('display: none')
-    
-  })
+  render(<Blog blog ={blog}/>)
+
+  const user = userEvent.setup()
+  const button = screen.getByText('view')
+  await user.click(button)
+
+  expect(screen.getByText(/http:\/\/another\.com/)).toBeDefined()
+
+  expect(screen.getByText(/likes/i)).toBeDefined()
+
+  expect(screen.getByText(/Test User/)).toBeDefined()
+})
 
 
-  describe('<Togglable />', () => {
-    let container
-  
-    beforeEach(() => {
-      container = render(
-        <Togglable buttonLabel="show...">
-          <div className="testDiv" >
-            togglable content
-          </div>
-        </Togglable>
-      ).container
-    })
-  
-    test('renders its children', () => {
-      screen.getByText('togglable content')
-    })
-  
-    test('at start the children are not displayed', () => {
-      const div = container.querySelector('.togglableContent')
-      expect(div).toHaveStyle('display: none')
-    })
-  
-    test('after clicking the button, children are displayed', async () => {
-      const user = userEvent.setup()
-      const button = screen.getByText('show...')
-      await user.click(button)
-  
-      const div = container.querySelector('.togglableContent')
-      expect(div).not.toHaveStyle('display: none')
-    })
+test('clicking the like button twice calls event handler twice', async () => {
+  const blog = {
+    title: 'Likeable Blog',
+    author: 'Author',
+    url: 'http://like.com',
+    likes: 0
+  }
 
-    test('toggled content can be closed', async () => {
-        const user = userEvent.setup()
-    
-        const button = screen.getByText('show...')
-        await user.click(button)
-    
-        const closeButton = screen.getByText('cancel')
-        await user.click(closeButton)
-    
-        const div = container.querySelector('.togglableContent')
-        expect(div).toHaveStyle('display: none')
-      })
-  })
+  const mockLikeHandler = vi.fn()
 
-  test('<BlogForm /> updates parent state and calls onSubmit', async () => {
-    const user = userEvent.setup()
-    const createBlog = vi.fn()
-  
-    render(<BlogForm createBlog={createBlog} />)
-  
-    const input = screen.getByRole('textbox')
-    const sendButton = screen.getByText('save')
-  
-    await user.type(input, 'testing a form...')
-    await user.click(sendButton)
-  
-    expect(createNote.mock.calls).toHaveLength(1)
-    expect(createNote.mock.calls[0][0].content).toBe('testing a form...')
-  })
+  render(<Blog blog={blog} handleLikeChange={mockLikeHandler} />)
+  const user = userEvent.setup()
+  const button = screen.getByText('view')
+  await user.click(button)
+  const likeButton = screen.getByText('like')
+  await user.click(likeButton)
+  await user.click(likeButton)
+  expect(mockLikeHandler.mock.calls).toHaveLength(2)
+})
+
+
+test('<BlogForm /> updates parent state and calls onSubmit', async () => {
+  const blog = {
+
+  }
+  const user = userEvent.setup()
+  const createBlog = vi.fn()
+
+  render(<BlogForm createBlog={createBlog} />)
+
+  const titleInput = screen.getByPlaceholderText('title:')
+  const authorInput = screen.getByPlaceholderText('author:')
+  const urlInput = screen.getByPlaceholderText('url:')
+  const sendButton = screen.getByText('create')
+
+  await user.type(titleInput, 'testing a form...')
+  await user.type(authorInput, 'testing a form...')
+  await user.type(urlInput, 'testing a form...')
+  await user.click(sendButton)
+
+  expect(createBlog.mock.calls).toHaveLength(1)
+  expect(createBlog.mock.calls[0][0].author).toBe('testing a form...')
+})

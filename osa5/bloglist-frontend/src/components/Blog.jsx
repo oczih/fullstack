@@ -14,7 +14,7 @@ const Blog = ({ blog, handleLikeChange, handleBlogDelete }) => {
       <div>
         <Togglable buttonLabel='view'>
           {blog.url}<br/>
-          {blog.likes} likes <button onClick={handleLikeChange}>like</button><br/>
+          {blog.likes} likes <button onClick={handleLikeChange} data-testid="like-count">like</button><br/>
           {blog.user ? blog.user.name : ''}<br/>
           <button onClick={handleBlogDelete}>remove</button>
         </Togglable>

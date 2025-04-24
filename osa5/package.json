@@ -1,0 +1,14 @@
+{
+  "name": "osa5",
+  "version": "1.0.0",
+  "main": "index.js",
+
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.14.1"
+  }
+}
