@@ -7,21 +7,28 @@ const useField = (type) => {
   const onChange = (event) => {
     setValue(event.target.value)
   }
-
+  const reset = () => setValue('')
   return {
     type,
     value,
-    onChange
+    onChange,
+    reset
   }
 }
 
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
 
-  // ...
+  useEffect(() => {
+    axios.get(baseUrl).then(response => {
+      setResources(response.data)
+    })
+  }, [baseUrl])
 
-  const create = (resource) => {
-    // ...
+  const create = async (resource) => {
+    const response = await axios.post(baseUrl, resource)
+    setResources(prev => prev.concat(response.data))
+    return response.data
   }
 
   const service = {
@@ -44,11 +51,14 @@ const App = () => {
   const handleNoteSubmit = (event) => {
     event.preventDefault()
     noteService.create({ content: content.value })
+    content.reset()
   }
  
   const handlePersonSubmit = (event) => {
     event.preventDefault()
     personService.create({ name: name.value, number: number.value})
+    name.reset()
+    number.reset()
   }
 
   return (

@@ -5,6 +5,7 @@ import {
   Routes, Route, Link, useNavigate, useParams
 } from 'react-router-dom'
 import  { useField } from './hooks'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 const Menu = () => {
   const padding = {
@@ -21,6 +22,7 @@ const Menu = () => {
 const Anecdote = ({anecdotes}) => {
   const id = useParams().id
   const anecdote = anecdotes.find(a => a.id === Number(id))
+  if (!anecdote) return <div>Anecdote not found</div>
   return (<div>
     <h2>{anecdote.content} by {anecdote.author}</h2>
     <p>has {anecdote.votes} votes</p>
@@ -81,30 +83,26 @@ const Notification = ({ message }) => {
   )
 }
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
-  const navigate = useNavigate()
-  const handleReset = () => {
-    setContent('')
-    setAuthor('')
-    setInfo('')
-  }
   const content = useField('text')
   const author = useField('text')
   const info = useField('text')
+  const navigate = useNavigate()
+
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
-    setContent('')
-    setAuthor('')
-    setInfo('')
     navigate('/')
+  }
+
+  const handleReset = () => {
+    content.reset()
+    author.reset()
+    info.reset()
   }
 
   return (
@@ -113,23 +111,23 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={content.onChange} />
+          <input {...content} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={author.onChange} />
+          <input {...author} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={info.onChange} />
+          <input {...info} />
         </div>
-        <button>create</button>
+        <button type="submit">create</button>
+        <button type="button" onClick={handleReset}>reset</button>
       </form>
-      <button onClick={handleReset}>reset</button>
     </div>
   )
-
 }
+
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
@@ -176,7 +174,7 @@ const App = () => {
 
   return (
     <Router>
-    <div>
+    <div className='container'>
       <h1>Software anecdotes</h1>
       <Menu />
       <Notification message={notification} />
