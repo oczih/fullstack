@@ -6,7 +6,8 @@ import {
 } from 'react-router-dom'
 import  { useField } from './hooks'
 import 'bootstrap/dist/css/bootstrap.min.css'
-
+import { Table } from 'react-bootstrap'
+import { Alert } from 'react-bootstrap'
 const Menu = () => {
   const padding = {
     paddingRight: 5
@@ -33,14 +34,24 @@ const AnecdoteList = ({ anecdotes }) => {
   console.log(anecdotes.map(anecdote => anecdote.id))
   
   return (
-  <div>
+    <div>
     <h2>Anecdotes</h2>
-    <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >
-        
-        <Link to={`/anecdotes/${anecdote.id}`}>
-        {anecdote.content}</Link></li>)}
-    </ul>
+    <Table striped>
+      <tbody>
+        {anecdotes.map(anecdote =>
+          <tr key={anecdote.id}>
+            <td>
+              <Link to={`/anecdotes/${anecdote.id}`}>
+                {anecdote.content}
+              </Link>
+            </td>
+            <td>
+              {anecdote.author}
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </Table>
   </div>
 )
 }
@@ -148,13 +159,13 @@ const App = () => {
   ])
 
   const [notification, setNotification] = useState('')
-
+  const [message, setMessage] = useState(null)
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
-    setNotification(`a new anecdote ${anecdote.content} created!`)
+    setMessage(`a new anecdote ${anecdote.content} created!`)
     setTimeout(() => {
-      setNotification('')
+      setMessage('')
     }, 5000)
   }
 
@@ -175,6 +186,11 @@ const App = () => {
   return (
     <Router>
     <div className='container'>
+      {(message &&
+      <Alert variant="success">
+        {message}
+      </Alert>
+    )}
       <h1>Software anecdotes</h1>
       <Menu />
       <Notification message={notification} />

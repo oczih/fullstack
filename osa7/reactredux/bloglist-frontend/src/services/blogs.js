@@ -1,30 +1,59 @@
 import axios from 'axios'
-import storage from './storage'
-
 const baseUrl = '/api/blogs'
 
-const getConfit = () => ({
-  headers : { Authorization: `Bearer ${storage.loadUser().token}` }
-})
+let token = null
 
-const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+const setToken = (newToken) => {
+  token = `Bearer ${newToken}`
 }
 
-const update = (id, newObject) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject, getConfit())
-  return request.then(response => response.data)
+const getAll = async () => {
+  const config = {
+    headers: { Authorization: token },
+  }
+
+  const response = await axios.get(baseUrl, config)
+  return response.data
 }
 
 const create = async (newObject) => {
-  const response = await axios.post(baseUrl, newObject, getConfit())
+  const config = {
+    headers: { Authorization: token },
+  }
+
+  const response = await axios.post(baseUrl, newObject, config)
+  return response.data
+}
+
+const update = async (newObject) => {
+  const response = await axios.put(`${baseUrl}/${newObject.id}`, newObject)
   return response.data
 }
 
 const remove = async (id) => {
-  const response = await axios.delete(`${baseUrl}/${id}`, getConfit())
+  const config = {
+    headers: { Authorization: token },
+  }
+
+  const response = await axios.delete(`${baseUrl}/${id}`, config)
   return response.data
 }
 
-export default { getAll, create, update, remove }
+const getComment = async (id) => {
+  const response = await axios.get(`${baseUrl}/${id}/comments` )
+  console.log(response.data)
+  return response.data
+}
+
+const getId = () => (100000 * Math.random()).toFixed(0)
+
+const postComment = async ({ blogId, content }) => {
+  const commentObject = { content }
+
+  // Ensure you are passing a valid blogId (as string) to the URL
+  const response = await axios.post(`${baseUrl}/${blogId}/comments`, commentObject)  // Use blogId as part of the URL
+  return response.data
+}
+
+
+export default { getAll, create, setToken, update, remove, getComment, postComment }

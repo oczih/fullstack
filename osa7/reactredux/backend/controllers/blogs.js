@@ -7,6 +7,7 @@ const userExtractor = require('../utils/middleware').userExtractor
 router.get('/', async (request, response) => {
   const blogs = await Blog
     .find({}).populate('user', { username: 1, name: 1 })
+    .populate('comments', { content: 1, id: 1 })
 
   response.json(blogs)
 })
@@ -24,7 +25,7 @@ router.post('/', userExtractor, async (request, response) => {
     return response.status(400).json({ error: 'title or url missing' })
   }   
 
-  blog.likes = blog.likes | 0
+  blog.likes = blog.likes || 0
   blog.user = user
   user.blogs = user.blogs.concat(blog._id)
 
@@ -55,6 +56,7 @@ router.delete('/:id', userExtractor, async (request, response) => {
 
   response.status(204).end()
 })
+
 
 router.put('/:id', async (request, response) => {
   const body = request.body

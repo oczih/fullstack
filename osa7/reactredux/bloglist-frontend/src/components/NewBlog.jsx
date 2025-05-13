@@ -1,65 +1,64 @@
 import React, { useState } from 'react'
+import { showNotification, clearNotification } from './reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
+import { useRef } from 'react'
+import { createBlogs } from './reducers/blogReducer'
+const NewBlogForm = () => {
+  const dispatch = useDispatch()
 
-const NewBlog = ({ doCreate }) => {
-  const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
-  const [author, setAuthor] = useState('')
-
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value)
-  }
-
-  const handleUrlChange = (event) => {
-    setUrl(event.target.value)
-  }
-
-  const handleAuthorChange = (event) => {
-    setAuthor(event.target.value)
-  }
-
-  const handleSubmit = (event) => {
+  const onCreate = (event) => {
     event.preventDefault()
-    doCreate({ title, url, author })
-    setAuthor('')
-    setTitle('')
-    setUrl('')
+
+    const title = event.target.title.value
+    const url = event.target.url.value
+    const author = event.target.author.value
+    if (title === '' || url === '' || author === '') {
+      return null
+    }
+    event.target.title.value = ''
+    event.target.url.value = ''
+    event.target.author.value = ''
+    const newBlog = {
+      title: title,
+      url: url,
+      author: author,
+    }
+    dispatch(createBlogs(newBlog))
+    dispatch(showNotification(`blog ${title} added`, 5))
+    setTimeout(() => {
+      dispatch(clearNotification())
+    }, 5000)
   }
 
   return (
-    <div>
+    <div className="container d-flex flex-column align-items-center mb-4">
       <h2>Create a New Blog</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title:</label>
-          <input
-            type="text"
-            data-testid='title'
-            value={title}
-            onChange={handleTitleChange}
-          />
+      <form onSubmit={onCreate} className="w-50">
+        <div className="form-group mb-3">
+          <label htmlFor="title">Title:</label>
+          <input name="title" id="title" className="form-control form-control-sm" />
         </div>
-        <div>
-          <label>URL:</label>
-          <input
-            type="text"
-            data-testid='url'
-            value={url}
-            onChange={handleUrlChange}
-          />
+
+        <div className="form-group mb-3">
+          <label htmlFor="url">URL:</label>
+          <input name="url" id="url" className="form-control form-control-sm" />
         </div>
-        <div>
-          <label>Author:</label>
-          <input
-            type="text"
-            data-testid='author'
-            value={author}
-            onChange={handleAuthorChange}
-          />
+
+        <div className="form-group mb-3">
+          <label htmlFor="author">Author:</label>
+          <input name="author" id="author" className="form-control form-control-sm" />
         </div>
-        <button type="submit">Create</button>
+
+        <div className="text-center">
+          <button type="submit" className="btn btn-success">
+            Create
+          </button>
+        </div>
       </form>
     </div>
   )
+
+
 }
 
-export default NewBlog
+export default NewBlogForm

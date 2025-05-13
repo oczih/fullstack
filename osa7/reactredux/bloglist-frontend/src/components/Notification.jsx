@@ -7,20 +7,22 @@ const Notification = () => {
     return null
   }
 
-  const { message, type } = notification
 
   const style = {
-    backgroundColor: 'lightgrey',
-    margin: '10px',
-    padding: '10px',
-    border: '2px solid',
-    borderColor: type === 'success' ? 'green' : 'red',
-    borderRadius: '5px',
+    border: 'solid',
+    padding: 10,
+    borderWidth: 1,
+    maxWidth: 300,
+    alignItems: 'center',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    fontSize: 20,
+    textAlign: 'center'
   }
 
   return (
-    <div style={style}>
-      {message}
+    <div style={style} className="alert alert-primary" role='alert'>
+      {notification}
     </div>
   )
 }
