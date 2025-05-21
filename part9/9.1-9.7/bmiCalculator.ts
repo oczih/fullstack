@@ -4,7 +4,7 @@ const parseArguments = (args: string[]): { height: number; weight: number } => {
   const inputs = args.slice(2).map(Number);
 
   if (inputs.length !== 2) {
-     throw new Error('Please provide exactly two numbers: height (cm) and weight (kg).')
+     throw new Error('Please provide exactly two numbers: height (cm) and weight (kg).');
   }
 
   if (inputs.some(isNaN)) {
@@ -16,8 +16,8 @@ const parseArguments = (args: string[]): { height: number; weight: number } => {
 };
 
 
-const calculateBmi = (height: number, weight: number): string => {
-    let bmi = weight / ((height / 100) ** 2);
+export const calculateBmi = (height: number, weight: number): string => {
+    const bmi = weight / ((height / 100) ** 2);
     let result: string;
 
     if(bmi < 16) {
@@ -39,16 +39,20 @@ const calculateBmi = (height: number, weight: number): string => {
     }
 
     return result;
-}
+};
 
-try {
-  const { height, weight } = parseArguments(process.argv);
-  const result = calculateBmi(height, weight);
-  console.log(result);
-} catch (error: unknown) {
-  if (error instanceof Error) {
-    console.error('Error:', error.message);
-  } else {
-    console.error('An unknown error occurred.');
+if (require.main === module) {
+  try {
+    const { height, weight } = parseArguments(process.argv);
+    const result = calculateBmi(height, weight);
+    console.log(result);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error:', error.message);
+    } else {
+      console.error('An unknown error occurred.');
+    }
   }
 }
+
+

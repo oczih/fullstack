@@ -1,4 +1,4 @@
-interface Result {
+export interface Result {
     periodLength: number,
     trainingDays: number,
     success: boolean,
@@ -26,12 +26,12 @@ const parseArguments = (args: string[]): { target: number; exercises: number[] }
 };
 
 
-const calculateExercises = (exercises: number[], target: number): Result => {
+export const calculateExercises = (exercises: number[], target: number): Result => {
     const periodLength = exercises.length;
 
     const trainingDays = exercises.filter(day => day > 0).length;
 
-    const totalTime = exercises.reduce((sum, time) => sum + time, 0)
+    const totalTime = exercises.reduce((sum, time) => sum + time, 0);
 
     const average = totalTime / periodLength;
 
@@ -41,14 +41,14 @@ const calculateExercises = (exercises: number[], target: number): Result => {
     const ratio = average / target;
 
     if (ratio > 0.66) {
-        rating = 3
-        ratingDescription = "You did great"
+        rating = 3;
+        ratingDescription = "You did great";
     } else if (ratio > 0.33) {
-        rating = 2
-        ratingDescription = "You did okay"
+        rating = 2;
+        ratingDescription = "You did okay";
     } else {
-        rating = 1
-        ratingDescription = "You did bad"
+        rating = 1;
+        ratingDescription = "You did bad";
     }
 
     return {
