@@ -1,8 +1,10 @@
 import express from 'express';
-import diagnosisService from './services/diagnosisService';
-import patientService from './services/patientsService';
-const app = express();
+import patientRouter from './routes/patients';
+import diagnosisRouter from './routes/diagnoses';
 import cors from 'cors';
+
+
+const app = express();
 app.use(cors());
 app.use(express.json());
 
@@ -11,13 +13,10 @@ app.get('/api/ping', (_req, res) => {
   console.log('someone pinged here');
   res.send('pong');
 });
-app.get('/api/diagnoses', (_req, res) => {
-    res.send(diagnosisService.getEntries());
-});
 
-app.get('/api/patients', (_req, res) => {
-  res.send(patientService.getEntries());
-});
+app.use('/api/patients', patientRouter);
+app.use('/api/diagnoses', diagnosisRouter);
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
