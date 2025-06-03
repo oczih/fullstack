@@ -57,9 +57,6 @@ function App() {
     <div>
       <h2>Add New Entry</h2>
       <Notification message={error} />
-      <fieldset>
-      
-      </fieldset>
       <form onSubmit={addDiary}>
         <div>
           <strong>Weather:</strong>
@@ -75,7 +72,7 @@ function App() {
               {w}
             </label>
           ))}
-        </div><br/>
+        </div>
         <div>
           <strong>Visibility:</strong>
           {visibilityOptions.map((v) => (
