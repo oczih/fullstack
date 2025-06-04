@@ -1,6 +1,0 @@
-[submodule "osa3"]
-	path = osa3
-	url = https://github.com/oczih/puhelinluettelo-backend.git
-[submodule "osa6/osa6/query-anecdotes"]
-	path = osa6/osa6/query-anecdotes
-	url = https://github.com/oczih/fullstack.git

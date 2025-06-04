@@ -15,14 +15,6 @@ function App() {
   }, [])
   const weatherOptions = Object.values(Weather);
   const visibilityOptions = Object.values(Visibility);
-  interface WeatherOption {
-    value: Weather;
-    label: string;
-  }
-  interface VisibilityOption {
-    value: Visibility;
-    label: string;
-  }
 
   const addDiary = (event: React.SyntheticEvent) => {
     event.preventDefault();
