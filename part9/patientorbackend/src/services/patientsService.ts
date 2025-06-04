@@ -1,27 +1,51 @@
 import patients from '../../data/patients';
-import { PatientPreview, NewPatient } from '../types';
+import { NewPatient, PatientPreview } from '../types';
 import { v4 as uuid } from 'uuid';
-import { Gender } from '../types';
+import { Patient} from '../types';
 
 const getEntries = (): PatientPreview[] => {
-    return patients.map(({ ssn: _ssn, gender, ...rest }) => ({
-        ...rest,
-        gender: gender as Gender
-    }));
+  return patients.map(
+    ({ id, name, dateOfBirth, gender, occupation, entries }) => ({
+      id,
+      name,
+      occupation,
+      dateOfBirth,
+      gender,
+      entries,
+    }),
+  );
 };
+const getPatientById = (id: string): Patient | undefined => {
+  const patient = patients.find((p) => p.id === id);
 
-const addPatient = (entry: NewPatient): PatientPreview  => {
-    const id = uuid();
-    const newPatiententry = {
+  if (!patient) {
+    return undefined;
+  }
+
+  const { id: pid, name,ssn, dateOfBirth, gender, occupation, entries } = patient;
+  return {
+    id: pid,
+    name,
+    ssn,
+    dateOfBirth,
+    gender,
+    occupation,
+    entries
+  };
+};
+const addPatient = (entry: NewPatient): Patient => {
+    const id: string = uuid();
+    const newPatientEntry: Patient = {
         id,
         ...entry
     };
-    patients.push(newPatiententry);
-    return newPatiententry;
+    patients.push(newPatientEntry);
+    return newPatientEntry;
 };
 export default {
     getEntries,
-    addPatient
+    addPatient,
+    getPatientById
 };
 
 
