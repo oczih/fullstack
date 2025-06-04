@@ -13,16 +13,15 @@ function App() {
       setDiaries(data)
     })
   }, [])
+    useEffect(() => {
+      if (error) {
+        const timer = setTimeout(() => setError(''), 5000);
+        return () => clearTimeout(timer);
+      }
+      return undefined;
+    }, [error]);
   const weatherOptions = Object.values(Weather);
   const visibilityOptions = Object.values(Visibility);
-  interface WeatherOption {
-    value: Weather;
-    label: string;
-  }
-  interface VisibilityOption {
-    value: Visibility;
-    label: string;
-  }
 
   const addDiary = (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -44,9 +43,6 @@ function App() {
     if (!message) {
       return null;
     }
-    setTimeout(() => {
-      setError('');
-    }, 5000)
     return (
       <div style={{ color: 'red', marginBottom: '10px', marginTop: '10px', fontFamily: 'Sans-serif' }}>
         {message}
