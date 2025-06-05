@@ -1,13 +1,14 @@
 import patients from '../../data/patients';
-import { NewPatient, PatientPreview } from '../types';
+import { NewPatient} from '../types';
 import { v4 as uuid } from 'uuid';
 import { Patient} from '../types';
 
-const getEntries = (): PatientPreview[] => {
+const getEntries = (): Patient[] => {
   return patients.map(
-    ({ id, name, dateOfBirth, gender, occupation, entries }) => ({
+    ({ id, name,ssn, dateOfBirth, gender, occupation, entries }) => ({
       id,
       name,
+      ssn,
       occupation,
       dateOfBirth,
       gender,
@@ -47,7 +48,6 @@ export default {
     addPatient,
     getPatientById
 };
-
 
 
 

@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { NewPatient, Gender } from '../types';
+import { Gender } from '../types';
 
-export const NewPatientSchema: z.ZodType<NewPatient> = z.object({
+export const NewPatientSchema = z.object({
   name: z.string(),
   dateOfBirth: z.string(),
   gender: z.nativeEnum(Gender),
@@ -10,6 +10,6 @@ export const NewPatientSchema: z.ZodType<NewPatient> = z.object({
   entries: z.array(z.any()),
 });
 
-export const toNewPatientEntry = (object: unknown): NewPatient => {
+export const toNewPatientEntry = (object: unknown): z.infer<typeof NewPatientSchema> => {
     return NewPatientSchema.parse(object);
   };
