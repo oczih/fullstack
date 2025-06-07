@@ -3,7 +3,7 @@ import { Button, TextField, Box, Select, MenuItem, SelectChangeEvent, InputLabel
 import { HealthCheckRating, NewEntry, Entry, Patient } from '../types';
 import patientsService from '../services/patients';
 
-const TogglableButton = ({
+const ToggleableButton = ({
   onClick,
   isVisible,
 }: {
@@ -115,7 +115,7 @@ export const NewHealthCheckEntry = ({ patient, entries, setEntries }: NewHealthC
   };
   return (
     <div>
-      <TogglableButton onClick={handleToggle} isVisible={formVisible} />
+      <ToggleableButton onClick={handleToggle} isVisible={formVisible} />
     {formVisible && (
         <div>
           <h3>New HealthCheck Entry</h3>
